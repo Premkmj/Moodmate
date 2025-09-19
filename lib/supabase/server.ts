@@ -1,14 +1,24 @@
+// lib/supabase-server.ts
 import { cookies } from 'next/headers'
-
-import { createServerClient } from '@supabase/ssr'
-import { type Database } from '@/database.types';
+import { createServerClient } from '@supabase/ssr' // or wherever you import from in your project
+import { type Database } from '@/database.types'
 
 export async function createClient() {
-  const cookieStore = await cookies()
+  const cookieStore = cookies()
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!supabaseUrl || !supabaseKey) {
+    // fail fast with clear message instead of random stack traces
+    throw new Error(
+      'Missing Supabase configuration. Set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY (or NEXT_PUBLIC_SUPABASE_ANON_KEY) in your environment.'
+    )
+  }
 
   return createServerClient<Database>(
-   process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://nzdpfgtafmmeyxuhbrhw.supabase.co'!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56ZHBmZ3RhZm1tZXl4dWhicmh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNjAxMDksImV4cCI6MjA3MzgzNjEwOX0.lkk1VtVqaWdJArOyEmgKbpa8CJq9rN5cvVZVawC9pfU!,
+    supabaseUrl,
+    supabaseKey,
     {
       cookies: {
         getAll() {
@@ -20,12 +30,14 @@ export async function createClient() {
               cookieStore.set(name, value, options)
             )
           } catch {
-            // The `setAll` method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing
-            // user sessions.
+            // setAll was called from a Server Component during build time - ignore or handle gracefully
           }
         },
       },
+    }
+  )
+}
+
     }
   )
 }
