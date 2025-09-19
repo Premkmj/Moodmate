@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* No global colors; components decide their own colors */
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+  .aspect-video { aspect-ratio: 16 / 9; }
+}
+
+/* Smooth soothing animation for Color Soothe panel */
+@keyframes soothe {
+  0% { filter: saturate(0.9) brightness(0.98); transform: scale(1.01); }
+  100% { filter: saturate(1.05) brightness(1.02); transform: scale(1.03); }
+}
+
+@layer components {
+  .card {
+    @apply rounded-xl border border-neutral-200 bg-white/80 backdrop-blur shadow-sm dark:border-neutral-800 dark:bg-neutral-900/70;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center rounded-lg px-4 py-2 font-medium transition-colors;
+  }
+  .btn-primary {
+    @apply btn bg-indigo-600 text-white hover:bg-indigo-700 active:bg-indigo-800 dark:bg-indigo-500 dark:hover:bg-indigo-600;
+  }
+  .btn-outline {
+    @apply btn border border-neutral-300 text-neutral-800 hover:bg-neutral-50 dark:border-neutral-700 dark:text-neutral-100 dark:hover:bg-neutral-800;
+  }
+  .chip {
+    @apply inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-sm text-neutral-700 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200;
+  }
+}
